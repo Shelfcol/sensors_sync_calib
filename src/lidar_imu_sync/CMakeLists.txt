@@ -20,6 +20,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   tf
+  ndt_omp
 )
 
 ## System dependencies are found with CMake's conventions
@@ -223,7 +224,8 @@ add_definitions(${PCL_DEFINITIONS})
 
 add_library(${PROJECT_NAME} src/lidar_imu_sync.cpp src/lidar_imu_calib.cpp)
 add_executable(${PROJECT_NAME}_node src/main.cpp)
-target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME} ${catkin_LIBRARIES} ${PCL_LIBRARIES} ndt_omp)
+# target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME} ${catkin_LIBRARIES} ${PCL_LIBRARIES} ndt_omp)
+target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME} ${catkin_LIBRARIES} ${PCL_LIBRARIES} )
 
 #############
 ## Testing ##

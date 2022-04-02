@@ -3,7 +3,10 @@ project(camera_camera_sync)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
-
+SET(CMAKE_BUILD_TYPE "Debug")
+# SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
+SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
+SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -158,7 +161,7 @@ include_directories(
 #   ${catkin_LIBRARIES}
 # )
 # 这里修改为自己的opencv路径
-set(OpenCV_DIR "/disk3/sensor_fusion/3rdparty/share/OpenCV")  
+# set(OpenCV_DIR "/home/gxf/multi-sensor-fusion/calib_ws/src/3rd_party/opencv3/share/OpenCV")  
 find_package(OpenCV REQUIRED)
 
 message(STATUS "    libraries: ${OpenCV_LIBS}")

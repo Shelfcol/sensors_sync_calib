@@ -6,6 +6,10 @@
 #include <vector>
 #include <opencv2/opencv.hpp>
 #include <opencv2/xfeatures2d/nonfree.hpp>
+// #include </home/gxf/opencv_build/opencv_contrib/modules/xfeatures2d/include/opencv2/xfeatures2d/nonfree.hpp>
+#include <opencv2/features2d/features2d.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include <time.h>
 
 #define PRINTLOG std::cout << __LINE__ << " in " << __FILE__ << std::endl;
@@ -29,7 +33,8 @@ public:
     double evaluateImageTimeStampSync(cv::Mat orgImage, cv::Mat dstImage);
 
     // 空间同步
-    void spatialSynchronization(cv::Mat image1, cv::Mat image2);
+    void spatialSynchronizationWithORB(cv::Mat image1, cv::Mat image2);
+    void spatialSynchronizationWithSURF(cv::Mat image1, cv::Mat image2);
 
 
 private:

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(lidar_imu_fusion)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++14)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -29,7 +29,7 @@ find_package(PCL REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(Ceres REQUIRED)
 find_package(GTSAM REQUIRED QUIET)
-find_package(Boost REQUIRED COMPONENTS filesystem program_options system)
+find_package(Boost REQUIRED COMPONENTS filesystem program_options system timer thread chrono serialization)
 
 ################################################
 ## Declare ROS messages, services and actions ##

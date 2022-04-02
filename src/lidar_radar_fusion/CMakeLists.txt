@@ -8,7 +8,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Ofast -Wfatal-errors -
 # endif()
 
 # OpenCV
-set(OpenCV_DIR "/home/kavin/3rdparty/share/OpenCV")
+# set(OpenCV_DIR "/home/gxf/multi-sensor-fusion/calib_ws/src/3rd_party/opencv3/share/OpenCV")
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 message(STATUS "libraries: ${OpenCV_LIBS}")

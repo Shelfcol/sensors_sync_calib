@@ -8,7 +8,8 @@
 #include <Eigen/Geometry>
 #include <Eigen/StdVector>
 
-#include "../../ndt_omp/include/pclomp/ndt_omp.h"
+// #include "../../../../ndt_omp/include/pclomp/ndt_omp.h"
+#include "/home/gxf/multi-sensor-fusion/calib_ws/src/ndt_omp/include/pclomp/ndt_omp.h"
 
 using namespace std;
 using PointT = pcl::PointXYZI;
