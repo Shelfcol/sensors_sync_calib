@@ -105,7 +105,7 @@ catkin_package(
 #  DEPENDS system_lib
 )
 # 这里修改为自己的opencv路径
-set(OpenCV_DIR "/disk3/sensor_fusion/3rdparty/share/OpenCV")  
+# set(OpenCV_DIR "/home/gxf/multi-sensor-fusion/calib_ws/src/3rd_party/opencv3/share/OpenCV")  
 find_package(OpenCV REQUIRED)
 
 ###########

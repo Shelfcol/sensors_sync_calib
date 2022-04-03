@@ -178,7 +178,7 @@ void img_callback(const sensor_msgs::ImageConstPtr &img_msg)
             for (int i = 0; i < NUM_OF_CAM; i++)
             {
                 cv::Mat tmp_img = stereo_img.rowRange(i * ROW, (i + 1) * ROW);
-                cv::cvtColor(show_img, tmp_img, CV_GRAY2RGB);
+                cv::cvtColor(show_img, tmp_img, cv::COLOR_BGR2RGB);
 
                 for (unsigned int j = 0; j < trackerData[i].cur_pts.size(); j++)
                 {
@@ -197,7 +197,7 @@ void img_callback(const sensor_msgs::ImageConstPtr &img_msg)
                     */
                     //char name[10];
                     //sprintf(name, "%d", trackerData[i].ids[j]);
-                    //cv::putText(tmp_img, name, trackerData[i].cur_pts[j], cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
+                    //cv::putText(tmp_img, name, trackerData[i].cur_pts[j], cv::cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
                 }
             }
             //cv::imshow("vis", stereo_img);

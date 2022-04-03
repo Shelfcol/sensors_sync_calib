@@ -3,7 +3,10 @@ project(camera_camera_sync)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
-
+SET(CMAKE_BUILD_TYPE "Debug")
+# SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
+SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
+SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -128,6 +131,12 @@ include_directories(
  ${catkin_INCLUDE_DIRS}
 )
 
+include_directories("/usr/include/eigen3")
+
+find_package(Eigen3 REQUIRED)
+include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
+message(STATUS "EIGEN3_VERSION: ${EIGEN3_VERSION}")
+
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/camera_camera_sync.cpp
@@ -157,10 +166,15 @@ include_directories(
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
-# 这里修改为自己的opencv路径
-set(OpenCV_DIR "/disk3/sensor_fusion/3rdparty/share/OpenCV")  
-find_package(OpenCV REQUIRED)
 
+
+find_package(Ceres REQUIRED)
+include_directories(${CERES_INCLUDE_DIRS})
+
+
+# 这里修改为自己的opencv路径
+# set(OpenCV_DIR "/home/gxf/multi-sensor-fusion/calib_ws/src/3rd_party/opencv3/share/OpenCV")  
+find_package(OpenCV REQUIRED)
 message(STATUS "    libraries: ${OpenCV_LIBS}")
 
 include_directories(
@@ -171,7 +185,7 @@ include_directories(
 
 add_library(${PROJECT_NAME} src/camera_camera_sync.cpp)
 add_executable(${PROJECT_NAME}_node src/main.cpp)
-target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME} ${catkin_LIBRARIES} boost_system ${OpenCV_LIBS})
+target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME} ${catkin_LIBRARIES} boost_system ${OpenCV_LIBS}  ${CERES_LIBRARIES})
 
 #############
 ## Install ##

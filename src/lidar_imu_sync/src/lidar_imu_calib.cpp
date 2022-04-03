@@ -180,15 +180,15 @@ Eigen::Vector3d LidarIMUCalib::calib(bool integration)
         if (imu_buffer_.end() == imu_it2)
             break;
         assert(imu_it2->stamp >= lidar_frame.stamp || imu_it1->stamp < imu_it2->stamp); 
-        //获取两个时刻imu的rotation
+        // 获取两个时刻imu的rotation
         Eigen::Quaterniond q_b1_w = imu_it1->rot;
         Eigen::Quaterniond q_b2_w = imu_it2->rot;
-        //获取时间比例，插值比例
+        // 获取时间比例，插值比例
         double scale = (lidar_frame.stamp - imu_it1->stamp) / (imu_it2->stamp - imu_it1->stamp);
-        //获取按照时间比例插值后的角度
+        // 获取按照时间比例插值后的角度
         Eigen::Quaterniond q_inter_w = getInterpolatedAttitude(q_b1_w, q_b2_w, scale);
 
-        //将插值后的imu姿态和点云帧同时送入到对齐队列中
+        // 将插值后的imu姿态和点云帧同时送入到对齐队列中
         aligned_lidar_imu_buffer_.push_back(move(pair<LidarFrame, Eigen::Quaterniond>(lidar_frame, q_inter_w)));
     }
 

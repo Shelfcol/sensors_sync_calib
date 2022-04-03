@@ -30,18 +30,18 @@ void LidarIMUSync::lidarCallback(const sensor_msgs::PointCloud2ConstPtr &msg)
     {
         ImuData data;
         //计算IMU的加速度信息
-        data.acc = Eigen::Vector3d(imu_buffer_.front()->linear_acceleration.x,
-                                   imu_buffer_.front()->linear_acceleration.y,
-                                   imu_buffer_.front()->linear_acceleration.z);
+        data.acc = Eigen::Vector3d( imu_buffer_.front()->linear_acceleration.x,
+                                    imu_buffer_.front()->linear_acceleration.y,
+                                    imu_buffer_.front()->linear_acceleration.z);
         //IMU的角速度信息
-        data.gyr = Eigen::Vector3d(imu_buffer_.front()->angular_velocity.x,
-                                   imu_buffer_.front()->angular_velocity.y,
-                                   imu_buffer_.front()->angular_velocity.z);
+        data.gyr = Eigen::Vector3d( imu_buffer_.front()->angular_velocity.x,
+                                    imu_buffer_.front()->angular_velocity.y,
+                                    imu_buffer_.front()->angular_velocity.z);
         //IMU的姿态信息
-        data.rot = Eigen::Quaterniond(imu_buffer_.front()->orientation.w,
-                                      imu_buffer_.front()->orientation.x,
-                                      imu_buffer_.front()->orientation.y,
-                                      imu_buffer_.front()->orientation.z);
+        data.rot = Eigen::Quaterniond(  imu_buffer_.front()->orientation.w,
+                                        imu_buffer_.front()->orientation.x,
+                                        imu_buffer_.front()->orientation.y,
+                                        imu_buffer_.front()->orientation.z);
         data.stamp = imu_buffer_.front()->header.stamp.toSec();
         //将IMU解析后的加速度、角速度、姿态信息追加到标定数据中
         caliber_.addImuData(data);
