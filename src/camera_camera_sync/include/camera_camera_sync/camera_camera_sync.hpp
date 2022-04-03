@@ -6,10 +6,6 @@
 #include <vector>
 #include <opencv2/opencv.hpp>
 #include <opencv2/xfeatures2d/nonfree.hpp>
-<<<<<<< HEAD
-// #include <opencv2/nonfree/nonfree.hpp>
-=======
->>>>>>> e85acb3439abcdd9dece6cd7feb04f57baff235e
 // #include </home/gxf/opencv_build/opencv_contrib/modules/xfeatures2d/include/opencv2/xfeatures2d/nonfree.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/core/core.hpp>
@@ -232,12 +228,10 @@ public:
     // 空间同步
     void spatialSynchronizationWithORB(cv::Mat image1, cv::Mat image2);
     void spatialSynchronizationWithSURF(cv::Mat image1, cv::Mat image2);
-<<<<<<< HEAD
     bool synchronizePitchRoll(cv::Mat img_left, cv::Mat img_right);
     bool synchronizePitchRollWithCeres(cv::Mat img_left, cv::Mat img_right);
-=======
+    bool synchronizePitchRollWithCeres(const std::vector<std::pair<std::string, std::string> >& syncImageLists);// 整体优化
 
->>>>>>> e85acb3439abcdd9dece6cd7feb04f57baff235e
 
 private:
     std::vector<std::string> oriImageLists_;

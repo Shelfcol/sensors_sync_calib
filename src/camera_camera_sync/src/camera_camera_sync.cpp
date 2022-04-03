@@ -44,8 +44,8 @@ void CameraCameraSync::getImageTimeStamp(std::string oriDirName, std::string dst
     getFiles(dstDirName, dstImageLists_);
     if(oriImageLists_.size() != dstImageLists_.size())
     {
-        std::cout << "the two image lists not equal!" << std::endl;
-        ROS_ERROR_STREAM("the two image lists not equal!");
+        // std::cout << "the two image lists not equal!" << std::endl;
+        // ROS_ERROR_STREAM("the two image lists not equal!");
         return;
     }
 }
@@ -193,13 +193,8 @@ void CameraCameraSync::spatialSynchronizationWithORB(cv::Mat srcImage1, cv::Mat 
 
     cv::Mat outImg;
     cv::drawKeypoints(srcImage1,keypoints_object,outImg,cv::Scalar::all(-1),cv::DrawMatchesFlags::DEFAULT);
-<<<<<<< HEAD
     // imshow("ORB descriptor",outImg);
     // cv::waitKey(0);
-=======
-    imshow("ORB descriptor",outImg);
-    cv::waitKey(0);
->>>>>>> e85acb3439abcdd9dece6cd7feb04f57baff235e
 
     //使用FLANN匹配算子进行匹配
     // cv::FlannBasedMatcher matcher;
@@ -215,7 +210,6 @@ void CameraCameraSync::spatialSynchronizationWithORB(cv::Mat srcImage1, cv::Mat 
 	for (int i = 0; i < descriptors_object.rows; i++)
 	{
 		int dist = matchePoints[i].distance;
-<<<<<<< HEAD
         // std::cout<<"dist = "<<dist<<std::endl;
 		if (dist < min_dist) {min_dist = dist;}
 		if (dist > max_dist) max_dist = dist;
@@ -223,14 +217,6 @@ void CameraCameraSync::spatialSynchronizationWithORB(cv::Mat srcImage1, cv::Mat 
 
 	printf(">Max dist 最大距离 : %d \n", max_dist);
 	printf(">Min dist 最小距离 : %d \n", min_dist);
-=======
-		if (dist < min_dist) min_dist = dist;
-		if (dist > max_dist) max_dist = dist;
-	}
-
-	printf(">Max dist 最大距离 : %f \n", max_dist);
-	printf(">Min dist 最小距离 : %f \n", min_dist);
->>>>>>> e85acb3439abcdd9dece6cd7feb04f57baff235e
 
 	//匹配距离小于3*min_dist的点对
 	std::vector< cv::DMatch > goodMatches;
@@ -253,12 +239,8 @@ void CameraCameraSync::spatialSynchronizationWithORB(cv::Mat srcImage1, cv::Mat 
 	cv::drawMatches(srcImage1, keypoints_object, srcImage2, keypoints_scene,
 		goodMatches, imgMatches, cv::Scalar::all(-1), cv::Scalar::all(-1),
 		std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
-<<<<<<< HEAD
     // imshow("ORB descriptor",imgMatches);
     // cv::waitKey(0);
-=======
- 
->>>>>>> e85acb3439abcdd9dece6cd7feb04f57baff235e
 	//定义两个局部变量
 	std::vector<cv::Point2f> obj;
 	std::vector<cv::Point2f> scene;
@@ -277,7 +259,6 @@ void CameraCameraSync::spatialSynchronizationWithORB(cv::Mat srcImage1, cv::Mat 
 
 	//从待测图片中获取角点
 	std::vector<cv::Point2f> obj_corners(4);
-<<<<<<< HEAD
 	// obj_corners[0] = cv::Point(0, 0);
 	// obj_corners[1] = cv::Point(srcImage1.cols, 0);
 	// obj_corners[2] = cv::Point(srcImage1.cols, srcImage1.rows);
@@ -288,17 +269,10 @@ void CameraCameraSync::spatialSynchronizationWithORB(cv::Mat srcImage1, cv::Mat 
 	obj_corners[2] = cv::Point(srcImage1.cols*2/3, srcImage1.rows*2/3);
 	obj_corners[3] = cv::Point(srcImage1.cols/3, srcImage1.rows*2/3);
 
-=======
-	obj_corners[0] = cv::Point(0, 0);
-	obj_corners[1] = cv::Point(srcImage1.cols, 0);
-	obj_corners[2] = cv::Point(srcImage1.cols, srcImage1.rows);
-	obj_corners[3] = cv::Point(0, srcImage1.rows);
->>>>>>> e85acb3439abcdd9dece6cd7feb04f57baff235e
 	std::vector<cv::Point2f> scene_corners(4);
  
 	//进行透视变换
 	cv::perspectiveTransform(obj_corners, scene_corners, H);
-<<<<<<< HEAD
 
     
     cv::line(imgMatches, obj_corners[0], obj_corners[1], cv::Scalar(33, 33, 133), 3);
@@ -317,9 +291,6 @@ void CameraCameraSync::spatialSynchronizationWithORB(cv::Mat srcImage1, cv::Mat 
     cv::line(imgMatches, scene_corners[3], scene_corners[0], cv::Scalar(33, 33, 133), 3);
 
 
-=======
- 
->>>>>>> e85acb3439abcdd9dece6cd7feb04f57baff235e
 	// 显示最终结果
 	// imshow("效果图", imgMatches);
     time_t timep;
@@ -327,13 +298,6 @@ void CameraCameraSync::spatialSynchronizationWithORB(cv::Mat srcImage1, cv::Mat 
     
     char name[1024];
     sprintf(name, "效果_%d.jpg", timep);
-<<<<<<< HEAD
-    // cv::namedWindow("ORB descriptor", 0);    
-    // cv::resizeWindow("ORB descriptor", 700, 900);   // 自己设定窗口图片的大小
-    // imshow("ORB descriptor",imgMatches);
-    // cv::waitKey(0);
-=======
->>>>>>> e85acb3439abcdd9dece6cd7feb04f57baff235e
     
     cv::imwrite(name,imgMatches);
 
@@ -383,7 +347,7 @@ void CameraCameraSync::spatialSynchronizationWithSURF(cv::Mat srcImage1, cv::Mat
 	//匹配距离小于3*min_dist的点对
 	std::vector< cv::DMatch > goodMatches;
  
-	for (int i = 0; i < descriptors_object.rows; i++)
+	for (size_t i = 0; i < descriptors_object.rows; i++)
 	{
 		if (matchePoints[i].distance < 2.5 * min_dist)
 		{
@@ -430,7 +394,6 @@ void CameraCameraSync::spatialSynchronizationWithSURF(cv::Mat srcImage1, cv::Mat
     sprintf(name, "效果_%d.jpg", timep);
     
     cv::imwrite(name,imgMatches);
-<<<<<<< HEAD
 	imshow("效果图", imgMatches);
     cv::waitKey(0);
 }
@@ -471,6 +434,38 @@ bool CameraCameraSync::synchronizePitchRoll(cv::Mat img_left, cv::Mat img_right)
     return true;
 }
 
+bool CameraCameraSync::synchronizePitchRollWithCeres(const std::vector<std::pair<std::string, std::string> >& syncImageLists)
+{
+    // 构建优化问题
+    double x[]={0.0,0.0};
+    ceres::Problem problem;
+    for(auto syncPair : syncImageLists)
+    {
+        cv::Mat image1 = cv::imread(syncPair.first, cv::IMREAD_GRAYSCALE);
+        cv::Mat image2 = cv::imread(syncPair.second, cv::IMREAD_GRAYSCALE);
+        if( !image1.data || !image2.data )
+        { 
+            std::cout<< " --(!) Error reading images " << std::endl; 
+            return -1;
+        }
+
+        std::vector<cv::Point2f> left_pts, right_pts;
+        findMatchPoints(image1, image2, left_pts, right_pts);
+        std::cout << "find match points:size: left:" << left_pts.size() << " right: " << right_pts.size() << std::endl;
+
+        // 构建优化问题
+        for(size_t i=0;i<left_pts.size();++i){
+            ceres::CostFunction* cost_func = CamPitchRollFactor::Create(left_pts[i],right_pts[i]);
+            problem.AddResidualBlock(cost_func, new ceres::HuberLoss(0.1),x);
+        }
+    }
+    ceres::Solver::Options options;
+    ceres::Solver::Summary summary;
+    ceres::Solve(options,&problem,&summary);
+    std::cout<<summary.BriefReport()<<std::endl;
+    std::cout << "current result: pitch & roll: " << x[0]/PI*180 << " " << x[1]/PI*180 << endl;
+}
+
 bool CameraCameraSync::synchronizePitchRollWithCeres(cv::Mat img_left, cv::Mat img_right)
 {
     if(!img_left.data || !img_right.data )
@@ -489,7 +484,7 @@ bool CameraCameraSync::synchronizePitchRollWithCeres(cv::Mat img_left, cv::Mat i
     ceres::Problem problem;
     for(int i=0;i<left_pts.size();++i){
         ceres::CostFunction* cost_func = CamPitchRollFactor::Create(left_pts[i],right_pts[i]);
-        problem.AddResidualBlock(cost_func,nullptr,x);
+        problem.AddResidualBlock(cost_func, new ceres::HuberLoss(0.1),x);
     }
     ceres::Solver::Options options;
     ceres::Solver::Summary summary;
@@ -498,6 +493,7 @@ bool CameraCameraSync::synchronizePitchRollWithCeres(cv::Mat img_left, cv::Mat i
 
     std::cout << "current result: pitch & roll: " << x[0]/PI*180 << " " << x[1]/PI*180 << endl;
     // current result: pitch & roll: 0.0358881 0.783933
+    // 联合优化： 0.0137414 1.4247
     pitch_cache_.push_back(x[0]);
     roll_cache_.push_back(x[1]);
 
@@ -583,6 +579,3 @@ void CameraCameraSync::findMatchPoints(const Mat srcImage1, const Mat srcImage2,
 	}
  
 }
-=======
-}
->>>>>>> e85acb3439abcdd9dece6cd7feb04f57baff235e

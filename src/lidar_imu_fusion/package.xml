@@ -1,20 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-<<<<<<< HEAD
   <name>lidar_imu_fusion</name>
   <version>0.0.0</version>
   <description>The lidar_imu_fusion package</description>
-=======
-<<<<<<< HEAD:src/camera_camera_sync_with_opt/package.xml
-  <name>camera_camera_sync_with_opt</name>
-  <version>0.0.0</version>
-  <description>The camera_camera_sync package</description>
-=======
-  <name>lidar_imu_fusion</name>
-  <version>0.0.0</version>
-  <description>The lidar_imu_fusion package</description>
->>>>>>> e85acb3439abcdd9dece6cd7feb04f57baff235e:src/lidar_imu_fusion/package.xml
->>>>>>> e85acb3439abcdd9dece6cd7feb04f57baff235e
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
@@ -31,15 +19,7 @@
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-<<<<<<< HEAD
   <!-- <url type="website">http://wiki.ros.org/lidar_imu_fusion</url> -->
-=======
-<<<<<<< HEAD:src/camera_camera_sync_with_opt/package.xml
-  <!-- <url type="website">http://wiki.ros.org/camera_camera_sync</url> -->
-=======
-  <!-- <url type="website">http://wiki.ros.org/lidar_imu_fusion</url> -->
->>>>>>> e85acb3439abcdd9dece6cd7feb04f57baff235e:src/lidar_imu_fusion/package.xml
->>>>>>> e85acb3439abcdd9dece6cd7feb04f57baff235e
 
 
   <!-- Author tags are optional, multiple are allowed, one per tag -->
@@ -68,22 +48,8 @@
   <!--   <test_depend>gtest</test_depend> -->
   <!-- Use doc_depend for packages you need only for building documentation: -->
   <!--   <doc_depend>doxygen</doc_depend> -->
-<<<<<<< HEAD
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>cv_bridge</build_depend>
-=======
-   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>cv_bridge</build_depend>
-<<<<<<< HEAD:src/camera_camera_sync_with_opt/package.xml
-  <build_depend>dynamic_reconfigure</build_depend>
-  <build_depend>image_geometry</build_depend>
-  <build_depend>image_transport</build_depend>
-  <build_depend>nodelet</build_depend>
-  <build_depend>roscpp</build_depend>
-  <build_depend>rospy</build_depend>
-  <build_depend>rostime</build_depend>
-=======
->>>>>>> e85acb3439abcdd9dece6cd7feb04f57baff235e
   <build_depend>geometry_msgs</build_depend>
   <build_depend>image_transport</build_depend>
   <build_depend>message_generation</build_depend>
@@ -92,41 +58,10 @@
   <build_depend>roscpp</build_depend>
   <build_depend>roslib</build_depend>
   <build_depend>rospy</build_depend>
-<<<<<<< HEAD
-=======
->>>>>>> e85acb3439abcdd9dece6cd7feb04f57baff235e:src/lidar_imu_fusion/package.xml
->>>>>>> e85acb3439abcdd9dece6cd7feb04f57baff235e
   <build_depend>sensor_msgs</build_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>tf</build_depend>
   <build_export_depend>cv_bridge</build_export_depend>
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:src/camera_camera_sync_with_opt/package.xml
-  <build_export_depend>dynamic_reconfigure</build_export_depend>
-  <build_export_depend>image_geometry</build_export_depend>
-  <build_export_depend>image_transport</build_export_depend>
-  <build_export_depend>nodelet</build_export_depend>
-  <build_export_depend>roscpp</build_export_depend>
-  <build_export_depend>rospy</build_export_depend>
-  <build_export_depend>rostime</build_export_depend>
-  <build_export_depend>sensor_msgs</build_export_depend>
-  <build_export_depend>std_msgs</build_export_depend>
-  <build_export_depend>tf</build_export_depend>
-  <exec_depend>cv_bridge</exec_depend>
-  <exec_depend>dynamic_reconfigure</exec_depend>
-  <exec_depend>image_geometry</exec_depend>
-  <exec_depend>image_transport</exec_depend>
-  <exec_depend>nodelet</exec_depend>
-  <exec_depend>roscpp</exec_depend>
-  <exec_depend>rospy</exec_depend>
-  <exec_depend>rostime</exec_depend>
-  <exec_depend>sensor_msgs</exec_depend>
-  <exec_depend>std_msgs</exec_depend>
-  <exec_depend>tf</exec_depend>
-
-=======
->>>>>>> e85acb3439abcdd9dece6cd7feb04f57baff235e
   <build_export_depend>geometry_msgs</build_export_depend>
   <build_export_depend>image_transport</build_export_depend>
   <build_export_depend>nav_msgs</build_export_depend>
@@ -151,10 +86,6 @@
   <exec_depend>tf</exec_depend>
   <exec_depend>message_runtime</exec_depend>
   
-<<<<<<< HEAD
-=======
->>>>>>> e85acb3439abcdd9dece6cd7feb04f57baff235e:src/lidar_imu_fusion/package.xml
->>>>>>> e85acb3439abcdd9dece6cd7feb04f57baff235e
 
 
   <!-- The export tag contains other, unspecified, tags -->
