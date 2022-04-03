@@ -25,8 +25,12 @@ int main()
             return -1;
         }
         
+<<<<<<< HEAD
         // camera_camera_sync_.spatialSynchronizationWithSURF(image1, image2);
         camera_camera_sync_.synchronizePitchRollWithCeres(image1, image2);
+=======
+        camera_camera_sync_.spatialSynchronizationWithSURF(image1, image2);
+>>>>>>> e85acb3439abcdd9dece6cd7feb04f57baff235e
     }
 
     // cv::Mat image1 = cv::imread("/disk3/sensor_fusion/datasets/src/rosbag_dump/2021-07-13-10-34-45/camera_c5_front_left_60/1625566154.370427.png", cv::IMREAD_GRAYSCALE);
