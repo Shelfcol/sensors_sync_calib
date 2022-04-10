@@ -33,6 +33,10 @@ find_package(Eigen3 REQUIRED)
 find_package(GTSAM REQUIRED QUIET)
 find_package(Boost REQUIRED COMPONENTS filesystem program_options system)
 
+# include_directories("/home/gxf/multi-sensor-fusion/calib_ws/src/ad_sensor_fusion/src/lidar_imu_sync/third_party/Kontiki/include/entity/")
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third_party/Kontiki)
+list(APPEND third_party_lib  Kontiki)
+
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
@@ -125,7 +129,7 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+ INCLUDE_DIRS include
 #  LIBRARIES lidar_imu_sync
 #  CATKIN_DEPENDS cv_bridge geometry_msgs image_transport message_generation nav_msgs pcl_conversions roscpp roslib rospy sensor_msgs std_msgs tf
 #  DEPENDS system_lib
@@ -140,12 +144,10 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIR}
 )
 
-include_directories(${EIGEN3_INCLUDE_DIR})
 add_definitions(${EIGEN3_DEFINITIONS})
-
-include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
@@ -225,7 +227,7 @@ add_definitions(${PCL_DEFINITIONS})
 add_library(${PROJECT_NAME} src/lidar_imu_sync.cpp src/lidar_imu_calib.cpp)
 add_executable(${PROJECT_NAME}_node src/main.cpp)
 # target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME} ${catkin_LIBRARIES} ${PCL_LIBRARIES} ndt_omp)
-target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME} ${catkin_LIBRARIES} ${PCL_LIBRARIES} )
+target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME} ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${third_party_lib} )
 
 #############
 ## Testing ##

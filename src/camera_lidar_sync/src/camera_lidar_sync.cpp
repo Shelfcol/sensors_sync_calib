@@ -1,7 +1,5 @@
 #include "camera_lidar_sync/camera_lidar_sync.hpp"
 
-
-
 CameraLidarSync::CameraLidarSync(const ros::NodeHandle& nh, const ros::NodeHandle& nh_private)
     : nh_(nh),
       nh_private_(nh_private),
@@ -33,13 +31,16 @@ CameraLidarSync::CameraLidarSync(const ros::NodeHandle& nh, const ros::NodeHandl
         p2: 1.2766832075472282e-02
         k3: -1.8572618846e-01
     感兴趣的话，可以对图像进行去畸变处理，代码如下：
-        // 去畸变并保留最大图
+        去畸变并保留最大图
         cv::Size img_size(img_width_, img_height_);
         cv::initUndistortRectifyMap(camera_intrinsics_,distcoeff_,cv::Mat(),
                 cv::getOptimalNewCameraMatrix(camera_intrinsics_,distcoeff_,img_size, 1, img_size, 0),  //getOptimalNewCameraMatrix是调节视场大小，为1时视场大小不变，小于1时缩放视场
                 img_size, CV_16SC2, undistort_map1, undistort_map2);
     */
-    camera_intrinsics_ << 1998.7356, 0.000000000000e+00, 851.8287, 0.000000000000e+00, 0.000000000000e+00, 1991.8909, 424.0041, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00, 0.0, 0.0, 0.0, 1.0;
+    camera_intrinsics_ <<   1998.7356, 0.000000000000e+00, 851.8287, 0.000000000000e+00,
+                            0.000000000000e+00, 1991.8909,  424.0041, 0.000000000000e+00, 
+                            0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00, 
+                            0.0, 0.0, 0.0, 1.0;
     // laser_to_cam_<<0.08083690,   	-0.99662126,   	-0.01167763,   	-0.59623674,   
     //                 0.04087759,   	0.01505343,   	-0.99906721,   	-0.38569012,   
     //                 0.99591426,  	0.08030508,   	0.04197840,   	-0.59186737,  
@@ -79,7 +80,7 @@ void CameraLidarSync::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     rgba8: CV_8UC4, RGB color image with an alpha channel
     其中mono8和bgr8是大多数OpenCV函数所期望的图像编码格式。
     */
-    cv_bridge::CvImagePtr image = cv_bridge::toCvCopy(msg, "mono8");
+    cv_bridge::CvImagePtr image = cv_bridge::toCvCopy(msg, "mono8"); // 深拷贝
     image->header.stamp = stamp;
     images_.push_back(*image);
 
@@ -96,29 +97,28 @@ void CameraLidarSync::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     while (((images_.back()).header.stamp - (images_.front()).header.stamp).toSec() > max_image_age_s_) {
         images_.pop_front();
     }
-
 }
 
 
 // void CameraLidarSync::pointCloudCallback(const PointCloud::ConstPtr& msg)
 void CameraLidarSync::pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr &laser_scan)
 {
-    int index = -1;
+    int index = -1; // 对应的图片的下标
     double time = laser_scan->header.stamp.toSec();
     /*
-    作业1：这里并未对容器内的图像时间进行同步，可以先对容器内的时间进行同步
+    //! 作业1：这里并未对容器内的图像时间进行同步，可以先对容器内的时间进行同步
     提示：参考上次课camera_imu的容器内时间同步
     */
-    //判断容器内的图像是否满足足够的数量，这里选择10帧，主要是为了方便与激光雷达10帧所对应
+    // 判断容器内的图像是否满足足够的数量，这里选择10帧，主要是为了方便与激光雷达10帧所对应
     if(images_.size() < delay_by_n_frames_)
     {
         return;
     }
-    //这里的图像并未做过自校正和同步，会影响后面评价效果，但由于这段数据是车辆静止时采集的，
-    //所以，图像的帧率对整体影响不大
+    // 这里的图像并未做过自校正和同步，会影响后面评价效果，但由于这段数据是车辆静止时采集的，
+    // 所以，图像的帧率对整体影响不大
 
-    //设定最小相机与激光时间差，这里的0.05表示50毫秒，由于图像为20Hz，即50毫秒，lidar为10Hz
-    float time_min = 0.05;
+    // 设定最小相机与激光时间差，这里的0.05表示50毫秒，由于图像为20Hz，即50毫秒，lidar为10Hz
+    float time_min = 0.05; // 一帧点云对应两个图像，两个点云帧之间有一个独立的图像
 
     //找出图像list中与点云帧相对时间差小于time_min的图像，感兴趣的可以试验一下，等于50毫秒的情况
     int count = 0;
@@ -126,7 +126,7 @@ void CameraLidarSync::pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr 
     {
         float time_diff = time - image_.header.stamp.toSec();
         //为啥要加个time_diff < 0呢？
-        if(time_diff< 0 && abs(time_diff) < time_min){
+        if(time_diff < 0 && abs(time_diff) < time_min){ // 激光雷达时间更早
             index = count;
             break;
         }
@@ -140,7 +140,7 @@ void CameraLidarSync::pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr 
         count += 1;
     }
 
-    //从点云中删除无效点
+    // 从点云中删除无效点
     /*
     首先定义一个pcl::PointCloud<pcl::PointXYZI>格式的点云帧，
     然后将获取的PointCloud2格式的点云转换为pcl::PointCloud<pcl::PointXYZI>格式的点云
@@ -159,6 +159,7 @@ void CameraLidarSync::pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr 
     pcl::PointCloud<pcl::PointXYZI>::Ptr output_cloud (new pcl::PointCloud<pcl::PointXYZI>);
     //这里可以对点云进行插值或者其他的处理
     //由于车辆是静止的，所以只需要对点云进行对齐就足够了，这里采用的是NDT对齐方式
+    // 只判断等于2，也可以是其他值
     if (point_cloud_lists_.size() > 2)
     {
         point_cloud_lists_.erase(point_cloud_lists_.begin());
@@ -177,7 +178,7 @@ void CameraLidarSync::pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr 
             //取出index所对应的图像，由于这里采用的是std::list容器，取指定索引的指针方法不太一样，需要采用advance
             std::list<cv_bridge::CvImage>::iterator iter = images_.begin();
             //iter为list中第一帧的指针，advance为第一帧指针的偏移到index-1
-            advance(iter,index-1);
+            advance(iter,index-1); //list没有random指针
             std::cout << "the image time is " << iter->header.stamp << std::endl;
             std::cout << "the lidar time is " << time << std::endl;
 
@@ -239,6 +240,9 @@ void CameraLidarSync::pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr 
             //最后进行点云配准，变换后的点云保存在output_cloud里，之后打印出配准分数。分数通过计算output_cloud与target cloud对应的最近点欧式距离的平方和得到，得分越小说明匹配效果越好。
             // Calculating required rigid transform to align the input cloud to the target cloud.
             ndt.align (*output_cloud, init_guess);
+
+
+
             std::cout << "Normal Distributions Transform has converged:" << ndt.hasConverged ()
                     << " score: " << ndt.getFitnessScore () << std::endl;
             std::cout << ndt.getFinalTransformation() << std::endl;
@@ -283,19 +287,27 @@ void CameraLidarSync::pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr 
         // }
 
         //将点云按照固定的外参投影到图像上
+        std::cout<<"project imgae"<<std::endl;
         for (int i = 0; i < output_cloud->points.size(); ++i)
         {
             if(output_cloud->points[i].x <= 0){
                 continue;
             }
+
+            // 3D-2D
+            // 转到相机坐标系
             float point_in_cam_x = output_cloud->points[i].x * laser_to_cam_(0, 0) + output_cloud->points[i].y * laser_to_cam_(0, 1) + output_cloud->points[i].z * laser_to_cam_(0, 2) + laser_to_cam_(0, 3);
             float point_in_cam_y = output_cloud->points[i].x * laser_to_cam_(1, 0) + output_cloud->points[i].y * laser_to_cam_(1, 1) + output_cloud->points[i].z * laser_to_cam_(1, 2) + laser_to_cam_(1, 3);
             float point_in_cam_z = output_cloud->points[i].x * laser_to_cam_(2, 0) + output_cloud->points[i].y * laser_to_cam_(2, 1) + output_cloud->points[i].z * laser_to_cam_(2, 2) + laser_to_cam_(2, 3);
+            
+            // 相机坐标系转到像素坐标系
             int x = (int)((camera_intrinsics_(0, 0) * point_in_cam_x + camera_intrinsics_(0, 1) * point_in_cam_y + camera_intrinsics_(0, 2) * point_in_cam_z) / point_in_cam_z);
             int y = (int)((camera_intrinsics_(1, 0) * point_in_cam_x + camera_intrinsics_(1, 1) * point_in_cam_y + camera_intrinsics_(1, 2) * point_in_cam_z) / point_in_cam_z);
+            
+            
             if(x > 0 && x < img_width_ && y > 0 && y < img_height_){
                 // float dist = (float)(std::sqrt(point_in_cam_x * point_in_cam_x + point_in_cam_y * point_in_cam_y + point_in_cam_z * point_in_cam_z));
-                int red = std::min(255, (int)(255 * abs((point_in_cam_z - max_val) / max_val)));
+                int red = std::min(255, (int)(255 * abs((point_in_cam_z - max_val) / max_val))); // 距离生成颜色
                 int green = std::min(255, (int)(255 * (1 - abs((point_in_cam_z - max_val) / max_val))));
                 cv::circle(out_img, cv::Point(x,y), 5, cv::Scalar(0, green, red), -1);
             }
@@ -303,11 +315,8 @@ void CameraLidarSync::pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr 
         
         std_msgs::Header header;
         header.stamp = laser_scan->header.stamp;
-        header.frame_id = "/camera_init";
-        pub_img_.publish(cv_bridge::CvImage(header, "bgr8", out_img).toImageMsg());
+        header.frame_id = "camera_init";
+        pub_img_.publish(cv_bridge::CvImage(header, "bgr8", out_img).toImageMsg());  //cv_bridge是ros消息和opencv数据之间的桥梁
         cv::imwrite("result/raw_cloud/" + std::to_string(time)+".png",out_img); 
     }
-
 }
-
-

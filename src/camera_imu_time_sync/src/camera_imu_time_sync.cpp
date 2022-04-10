@@ -83,7 +83,7 @@ void CameraImuTimeSync::imuCallback(const sensor_msgs::ImuConstPtr& msg) {
 
   // integrate imu reading
   double half_delta_t = (msg->header.stamp - prev_msg.header.stamp).toSec() / 2.0;
-
+  // 平均角速度积分
   Eigen::Quaterniond delta_angle =
       Eigen::AngleAxisd(half_delta_t * (msg->angular_velocity.x + prev_msg.angular_velocity.x),
                         Eigen::Vector3d::UnitX()) *

@@ -2,3 +2,4 @@ build/
 datasets/
 devel/
 *.vc.db
+.vscode/*

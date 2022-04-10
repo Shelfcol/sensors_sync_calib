@@ -7,7 +7,6 @@
 #include <time.h>
 
 #include "lidar_imu_sync/lidar_imu_calib.hpp"
-
 using namespace std;
 
 class LidarIMUSync{
@@ -26,5 +25,6 @@ class LidarIMUSync{
         ros::Subscriber imu_sub_;
             // initialize caliber
         LidarIMUCalib caliber_;
+
 
 };

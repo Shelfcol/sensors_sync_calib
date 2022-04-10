@@ -83,7 +83,7 @@ private:
 
     std::vector<sensor_msgs::Image> img_vec_;
     
-    std::list<cv_bridge::CvImage> images_;
+    std::list<cv_bridge::CvImage> images_; // 容器保存，可以降低丢帧的影响
     std::vector<pcl::PointCloud<pcl::PointXYZI> > point_cloud_lists_;
     std::vector<double> time_vec_;
 

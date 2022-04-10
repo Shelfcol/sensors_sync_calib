@@ -10,13 +10,12 @@ LidarIMUSync::LidarIMUSync(const ros::NodeHandle& nh, const ros::NodeHandle& nh_
       nh_private_(nh_private)
 {
     lidar_sub_ = nh_.subscribe<sensor_msgs::PointCloud2>("/velodyne_points", 10, &LidarIMUSync::lidarCallback, this);
-    imu_sub_ = nh_.subscribe<sensor_msgs::Imu>("/cgi610/imu", 100, &LidarIMUSync::imuCallback, this);
-
+    imu_sub_   = nh_.subscribe<sensor_msgs::Imu>("/cgi610/imu", 100, &LidarIMUSync::imuCallback, this);
 }
 
 void LidarIMUSync::lidarCallback(const sensor_msgs::PointCloud2ConstPtr &msg)
 {
-    //读取激光数据并进行解析
+    // 读取激光数据并进行解析
     CloudT::Ptr cloud(new CloudT);
     pcl::fromROSMsg(*msg, *cloud);
     LidarData data;
@@ -29,15 +28,15 @@ void LidarIMUSync::lidarCallback(const sensor_msgs::PointCloud2ConstPtr &msg)
     while (imu_buffer_.size() != 0)
     {
         ImuData data;
-        //计算IMU的加速度信息
+        // 计算IMU的加速度信息
         data.acc = Eigen::Vector3d( imu_buffer_.front()->linear_acceleration.x,
                                     imu_buffer_.front()->linear_acceleration.y,
                                     imu_buffer_.front()->linear_acceleration.z);
-        //IMU的角速度信息
+        // IMU的角速度信息
         data.gyr = Eigen::Vector3d( imu_buffer_.front()->angular_velocity.x,
                                     imu_buffer_.front()->angular_velocity.y,
                                     imu_buffer_.front()->angular_velocity.z);
-        //IMU的姿态信息
+        // IMU的姿态信息
         data.rot = Eigen::Quaterniond(  imu_buffer_.front()->orientation.w,
                                         imu_buffer_.front()->orientation.x,
                                         imu_buffer_.front()->orientation.y,
@@ -49,9 +48,9 @@ void LidarIMUSync::lidarCallback(const sensor_msgs::PointCloud2ConstPtr &msg)
         imu_buffer_.pop();
     }
     // calib
-    //执行标定函数
+    // 执行标定函数
     Eigen::Vector3d rpy = caliber_.calib();
-    //沿Z轴的旋转向量、沿Y轴的旋转向量、沿X轴的旋转向量
+    // 沿Z轴的旋转向量、沿Y轴的旋转向量、沿X轴的旋转向量
     Eigen::Matrix3d rot = Eigen::Matrix3d(Eigen::AngleAxisd(rpy[2], Eigen::Vector3d::UnitZ()) * Eigen::AngleAxisd(rpy[1], Eigen::Vector3d::UnitY()) * Eigen::AngleAxisd(rpy[0], Eigen::Vector3d::UnitX()));
     cout << "result euler angle(RPY) : " << rpy[0] << " " << rpy[1] << " " << rpy[2] << endl;
     cout << "result extrinsic rotation matrix : " << endl;

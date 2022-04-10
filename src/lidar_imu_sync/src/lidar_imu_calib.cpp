@@ -15,7 +15,7 @@ LidarIMUCalib::LidarIMUCalib()
     // init downsample object
     //设置体素栅格叶大小，向量参数leaf_ size 是体素栅格叶大小参数，每个元素分别表示体素在XYZ方向上的尺寸
     //属于VoxelGrid函数中
-    downer_.setLeafSize(0.1, 0.1, 0.1);
+    downer_.setLeafSize(0.2, 0.2, 0.2);
 
     // init register object
     //NormalDistributionsTransform属于PCL的正态分布变换
@@ -117,29 +117,41 @@ void LidarIMUCalib::addImuData(const ImuData &data)
 {
     imu_buffer_.push_back(data);
 }
+// imu_buffer_里面的欧拉角
+void LidarIMUCalib::IntergrateIMU()
+{
+    // 直接进行角速度积分
+    int imu_buffer_size = imu_buffer_.size(); // 来进行对比
+    printf("integrate angular velocity\n");
+    imu_buffer_[0].rot = Eigen::Quaterniond::Identity();
+    for (int i = 1; i < imu_buffer_size; i++)
+    {
+        Eigen::Vector3d bar_gyr = 0.5 * (imu_buffer_[i - 1].gyr + imu_buffer_[i].gyr);
+        Eigen::Vector3d angle_inc = bar_gyr * (imu_buffer_[i].stamp - imu_buffer_[i - 1].stamp);
+        Eigen::Quaterniond rot_inc = Eigen::Quaterniond(1.0, 0.5 * angle_inc[0], 0.5 * angle_inc[1], 0.5 * angle_inc[2]);
+        imu_buffer_[i].rot = imu_buffer_[i - 1].rot * rot_inc;
+    }
+    double start_time = imu_buffer_.front().stamp;
+    double end_time = imu_buffer_[imu_buffer_size-1].stamp;
+    double knot_dist = 0.02;
+    double time_offset_padding = 0;
+
+    // 使用kontiki的连续轨迹获得
+    traj_manager_ = std::make_shared<TrajectoryManager>(start_time,end_time,knot_dist,time_offset_padding);
+    traj_manager_->initialSO3TrajWithGyro();    
+}
+
 
 Eigen::Vector3d LidarIMUCalib::calib(bool integration)
 {
-    //判断标定程序中，有无lidar数据和imu数据
-    if (lidar_buffer_.size() == 0 || imu_buffer_.size() == 0)
+    //判断标定程序中，有无lidar数据和imu数据 只取2s数据
+    // if (lidar_buffer_.size() == 0 || imu_buffer_.size() == 0)
+    if (lidar_buffer_.size() != 50 )
     {
         cout << "no lidar data or imu data !!!" << endl;
         return init_R_;
     }
     cout << "total lidar buffer size " << lidar_buffer_.size() << ", imu buffer size " << imu_buffer_.size() << endl;
-    // integration rotation of imu, when raw imu attitude has big error
-    //imu预积分操作，主要针对原始imu姿态误差较大时
-    if (integration)
-    {
-        imu_buffer_[0].rot = Eigen::Quaterniond::Identity();
-        for (int i = 1; i < imu_buffer_.size(); i++)
-        {
-            Eigen::Vector3d bar_gyr = 0.5 * (imu_buffer_[i - 1].gyr + imu_buffer_[i].gyr);
-            Eigen::Vector3d angle_inc = bar_gyr * (imu_buffer_[i].stamp - imu_buffer_[i - 1].stamp);
-            Eigen::Quaterniond rot_inc = Eigen::Quaterniond(1.0, 0.5 * angle_inc[0], 0.5 * angle_inc[1], 0.5 * angle_inc[2]);
-            imu_buffer_[i].rot = imu_buffer_[i - 1].rot * rot_inc;
-        }
-    }
 
     //对点云数据进行预处理，清除掉无效的点云数据，即第一帧imu帧到来之前的点云数据都认为时无效值
     //主要比较imu帧与点云帧的时间戳，凡是在第一帧imu到来前，所有的点云帧都认为是无效的
@@ -152,11 +164,33 @@ Eigen::Vector3d LidarIMUCalib::calib(bool integration)
     //清除无效帧，如果没有有效的点云帧，则直接返回0值
     if (invalid_lidar_it != lidar_buffer_.begin())
         lidar_buffer_.erase(lidar_buffer_.begin(), invalid_lidar_it);
-    if (lidar_buffer_.size() == 0)
+
+    // 清除尾部有效数据
+    // auto invalid_back_lidar_it_ = lidar_buffer_.rbegin();
+    // for(;invalid_back_lidar_it_!=lidar_buffer_.rend();++invalid_back_lidar_it_){
+    //     if(invalid_back_lidar_it_->stamp<=imu_buffer_.back().stamp)
+    //         break;
+    // }
+    // lidar_buffer_.erase(invalid_back_lidar_it_.base(),lidar_buffer_.rbegin().rbegin());
+    // if (lidar_buffer_.size() == 0)
+    // {
+    //     cout << "no valid lidar frame !!!" << endl;
+    //     return move(Eigen::Vector3d(0.0, 0.0, 0.0));
+    // }
+
+    
+
+
+    // integration rotation of imu, when raw imu attitude has big error
+    // imu预积分操作，主要针对原始imu姿态误差较大时
+    // 角速度积分为角度
+    // 将imu_data里面的角速度积分得到角度
+    if (integration)
     {
-        cout << "no valid lidar frame !!!" << endl;
-        return move(Eigen::Vector3d(0.0, 0.0, 0.0));
+        IntergrateIMU();
     }
+
+
 
     // 获取时间对齐后的lidar-odo与IMU预积分后的rotation
     auto last_imu_it = imu_buffer_.begin();

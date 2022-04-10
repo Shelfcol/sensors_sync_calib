@@ -7,9 +7,10 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <Eigen/StdVector>
-
+#include <mutex>
 // #include "../../../../ndt_omp/include/pclomp/ndt_omp.h"
 #include "/home/gxf/multi-sensor-fusion/calib_ws/src/ndt_omp/include/pclomp/ndt_omp.h"
+#include "trajectory_manager.h"
 
 using namespace std;
 using PointT = pcl::PointXYZI;
@@ -24,7 +25,7 @@ struct LidarData
 struct LidarFrame
 {
     double stamp;
-    Eigen::Matrix4d T;
+    Eigen::Matrix4d T; // 与上一帧的相对运动
     Eigen::Matrix4d gT;
     CloudT::Ptr cloud{nullptr};
 
@@ -37,6 +38,7 @@ struct ImuData
     Eigen::Vector3d acc;
     Eigen::Vector3d gyr; 
     Eigen::Quaterniond rot;
+    Eigen::Quaterniond continous_rot; //由kontiki轨迹获得
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
@@ -52,7 +54,7 @@ public:
 
     //@brief: add imu data and cache
     void addImuData(const ImuData &data);
-
+    void IntergrateIMU();
     //@brief: integration imu data, align lidar odom and imu
     Eigen::Vector3d calib(bool integration = false);
 
@@ -79,6 +81,9 @@ private:
 
     vector<pair<Eigen::Quaterniond, Eigen::Quaterniond>> corres1_;
     vector<pair<Eigen::Quaterniond, Eigen::Quaterniond>> corres2_;
+
+    std::mutex imu_mtx_;
+    TrajectoryManager traj_manager_;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
