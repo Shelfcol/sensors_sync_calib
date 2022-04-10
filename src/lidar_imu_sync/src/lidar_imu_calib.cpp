@@ -148,7 +148,7 @@ Eigen::Vector3d LidarIMUCalib::calib(bool integration)
     // if (lidar_buffer_.size() == 0 || imu_buffer_.size() == 0)
     if (lidar_buffer_.size() != 50 )
     {
-        cout << "no lidar data or imu data !!!" << endl;
+        cout << "lidar_buffer_.size() != 50" << endl;
         return init_R_;
     }
     cout << "total lidar buffer size " << lidar_buffer_.size() << ", imu buffer size " << imu_buffer_.size() << endl;

@@ -1,5 +1,5 @@
-#pragma once
-
+#ifndef LIDAR_IMU_CALIB_HPP_
+#define LIDAR_IMU_CALIB_HPP_
 #include <iostream>
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
@@ -10,38 +10,8 @@
 #include <mutex>
 // #include "../../../../ndt_omp/include/pclomp/ndt_omp.h"
 #include "/home/gxf/multi-sensor-fusion/calib_ws/src/ndt_omp/include/pclomp/ndt_omp.h"
-#include "trajectory_manager.h"
-
-using namespace std;
-using PointT = pcl::PointXYZI;
-using CloudT = pcl::PointCloud<PointT>;
-
-struct LidarData
-{
-    double stamp;
-    CloudT::Ptr cloud;
-};
-
-struct LidarFrame
-{
-    double stamp;
-    Eigen::Matrix4d T; // 与上一帧的相对运动
-    Eigen::Matrix4d gT;
-    CloudT::Ptr cloud{nullptr};
-
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-};
-
-struct ImuData
-{
-    double stamp;
-    Eigen::Vector3d acc;
-    Eigen::Vector3d gyr; 
-    Eigen::Quaterniond rot;
-    Eigen::Quaterniond continous_rot; //由kontiki轨迹获得
-
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-};
+#include "lidar_imu_sync/trajectory_manager.hpp"
+#include "lidar_imu_sync/data_types.hpp"
 
 class LidarIMUCalib
 {
@@ -83,7 +53,9 @@ private:
     vector<pair<Eigen::Quaterniond, Eigen::Quaterniond>> corres2_;
 
     std::mutex imu_mtx_;
-    TrajectoryManager traj_manager_;
+    std::shared_ptr<TrajectoryManager> traj_manager_;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
+
+#endif

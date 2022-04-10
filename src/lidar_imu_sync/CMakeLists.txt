@@ -21,6 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tf
   ndt_omp
+  rosbag
 )
 
 ## System dependencies are found with CMake's conventions
@@ -35,7 +36,13 @@ find_package(Boost REQUIRED COMPONENTS filesystem program_options system)
 
 # include_directories("/home/gxf/multi-sensor-fusion/calib_ws/src/ad_sensor_fusion/src/lidar_imu_sync/third_party/Kontiki/include/entity/")
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third_party/Kontiki)
+include_directories(${PROJECT_SOURCE_DIR}/third_party/Kontiki/include) # important
 list(APPEND third_party_lib  Kontiki)
+
+set(HEADER_FILES ${PROJECT_SOURCE_DIR}/include/lidar_imu_sync/lidar_imu_sync.hpp
+                  ${PROJECT_SOURCE_DIR}/include/lidar_imu_sync/lidar_imu_calib.hpp
+                  ${PROJECT_SOURCE_DIR}/include/lidar_imu_sync/trajectory_manager.hpp)
+
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -130,7 +137,7 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
  INCLUDE_DIRS include
-#  LIBRARIES lidar_imu_sync
+ LIBRARIES lidar_imu_sync
 #  CATKIN_DEPENDS cv_bridge geometry_msgs image_transport message_generation nav_msgs pcl_conversions roscpp roslib rospy sensor_msgs std_msgs tf
 #  DEPENDS system_lib
 )
@@ -225,7 +232,7 @@ add_definitions(${PCL_DEFINITIONS})
 # )
 
 add_library(${PROJECT_NAME} src/lidar_imu_sync.cpp src/lidar_imu_calib.cpp)
-add_executable(${PROJECT_NAME}_node src/main.cpp)
+add_executable(${PROJECT_NAME}_node src/main.cpp  ${HEADER_FILES})
 # target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME} ${catkin_LIBRARIES} ${PCL_LIBRARIES} ndt_omp)
 target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME} ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${third_party_lib} )
 
